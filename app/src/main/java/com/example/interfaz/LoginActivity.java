@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,29 +16,30 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity {
 
     Button Inicio, Registro;
-    EditText txtContraseña, txtEmail;
+    EditText txtContrasena, txtEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("LoginActivity", "onCreate() method is called.");
         setContentView(R.layout.activity_login);
 
         Inicio = findViewById(R.id.btnInicioSesion);
 
        txtEmail = findViewById(R.id.txtEmail);
-       txtContraseña = findViewById(R.id.txtContraseña);
+       txtContrasena = findViewById(R.id.txtContraseña);
 
        Inicio.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
 
-               String contraseña = txtContraseña.getText().toString();
-               if(contraseña.equals("")) {
-                   txtContraseña.setError("Ingrese su contraseña");
-                   txtContraseña.requestFocus();
-               } else if (contraseña.length()<7 && contraseña.length()>30) {
-                   txtContraseña.setError("Contraseña no valida");
-                   txtContraseña.requestFocus();
+               String contrasena = txtContrasena.getText().toString();
+               if(contrasena.equals("")) {
+                   txtContrasena.setError("Ingrese su contraseña");
+                   txtContrasena.requestFocus();
+               } else if (contrasena.length()<7 && contrasena.length()>30) {
+                   txtContrasena.setError("Contraseña no valida");
+                   txtContrasena.requestFocus();
                }
 
                    Pattern pattern = Pattern
@@ -55,6 +58,17 @@ public class LoginActivity extends AppCompatActivity {
                            finish();
                        }
                    }
+
+                   DataBaseHelper dataBaseHelper = new DataBaseHelper(LoginActivity.this);
+                   boolean success = dataBaseHelper.login(contrasena, email);
+                   if (success) {
+                       setContentView(R.layout.activity_panel_gastos);
+                   } else {
+                       Toast.makeText(LoginActivity.this, "Usuario y contraseña no válidos", Toast.LENGTH_SHORT).show();
+                   }
+
+
+
 
                }
 
